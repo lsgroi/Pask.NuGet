@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{864FD7E0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{73C4FA2B-9E57-4D97-9752-E3F4EA04766D}"
 	ProjectSection(SolutionItems) = preProject
+		.build\scripts\Pask.NuGet.Tests.Infrastructure.ps1 = .build\scripts\Pask.NuGet.Tests.Infrastructure.ps1
 		.build\scripts\Properties.ps1 = .build\scripts\Properties.ps1
 	EndProjectSection
 EndProject
