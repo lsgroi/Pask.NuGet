@@ -1,4 +1,5 @@
 ﻿Import-Task Clean, Version-BuildServer, Pack-Nuspec, Test-Pester, Push-Local
+Import-Script Pask.NuGet -Project Pask.NuGet
 
 # Synopsis: Default task
 Task . Clean, Pack-Nuspec, Test, Push-Local

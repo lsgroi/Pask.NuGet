@@ -1,6 +1,8 @@
-﻿# Synopsis: Create a NuGet package targeting a Nuspec
+﻿Import-Properties -Project Pask
+Import-Script Properties.MSBuild -Package Pask
+
+# Synopsis: Create a NuGet package targeting a Nuspec
 Task Pack-Nuspec {
-    Import-Properties -Project Pask
     Set-Property CreateSymbolsPackage -Default $false
     Set-Property IncludePdb -Default $false
 
@@ -20,5 +22,5 @@ Task Pack-Nuspec {
 
     $Nuspec = "$(Join-Path "$ProjectFullPath" "$ProjectName").nuspec"
     "Packing $Nuspec"
-	Exec { & (Get-NuGetExe) pack "$Nuspec" -BasePath "$ProjectFullPath" -NoDefaultExcludes -OutputDirectory "$BuildOutputFullPath" -Version $Version.SemVer -Properties "id=$ProjectName" $Symbols $Exclude $ExcludePattern }
+	Exec { & (Get-NuGetExe) pack "$Nuspec" -BasePath "$ProjectFullPath" -NoDefaultExcludes -OutputDirectory "$BuildOutputFullPath" -Version $Version.SemVer -Properties "id=$ProjectName;configuration=$BuildConfiguration" $Symbols $Exclude $ExcludePattern }
 }

@@ -5,6 +5,15 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{ED57E33D-8375-4937-9212-2B18C780CA59}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{6A0ABE72-E30D-4C5D-86EA-A882B134E644}"
+	ProjectSection(SolutionItems) = preProject
+		.build\build.ps1 = .build\build.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{ADB6C93F-6569-4672-8CBF-BD6933DA3A52}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{9C287A37-6ED1-40A0-82EC-AA152C72DDE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +27,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ADB6C93F-6569-4672-8CBF-BD6933DA3A52} = {6A0ABE72-E30D-4C5D-86EA-A882B134E644}
+		{9C287A37-6ED1-40A0-82EC-AA152C72DDE8} = {6A0ABE72-E30D-4C5D-86EA-A882B134E644}
 	EndGlobalSection
 EndGlobal

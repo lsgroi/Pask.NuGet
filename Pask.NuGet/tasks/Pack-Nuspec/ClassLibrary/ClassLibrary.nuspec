@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$id$</title>
+        <authors>Luca Sgroi</authors>
+        <owners>Luca Sgroi</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <summary>Test Pack-Nuspec</summary>
+        <description>Test NuGet pack targeting a Nuspec</description>
+    </metadata>
+    <files>
+        <file src="bin\$configuration$\**" target="lib\net462" />
+        <file src="**\*.cs" target="src" />
+    </files>
+</package>
