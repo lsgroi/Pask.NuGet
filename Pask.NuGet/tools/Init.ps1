@@ -9,6 +9,29 @@ if ($Project -eq $null) {
     return
 }
 
+<#
+.SYNOPSIS 
+   Adds a file to a solution project
+
+.PARAMETER $Project <EnvDTE.Project>
+   The project
+
+.PARAMETER File <string>
+   Full name of the file
+
+.OUTPUTS
+   None
+#>
+function Add-FileToProject {
+    param($Project, [string]$File)
+
+    $FileName = Split-Path -Path $File -Leaf
+    if (($Project.ProjectItems | Where { $_.FileNames(1) -eq $File }) -eq $null) {
+		Write-Host "Adding '$FileName' to project '$($Project.Name)'."
+		$Project.ProjectItems.AddFromFile($File) | Out-Null
+    }
+}
+
 $Solution = Get-Interface $dte.Solution ([EnvDTE80.Solution2])
 $SolutionFullPath = Split-Path -Path $Solution.FullName
 $ProjectFullPath = Split-Path -Path $Project.FullName
@@ -21,12 +44,25 @@ $Package = $PackagesXml.packages.package | Where { $_.id -eq $Package.Id -and $_
 if ($Package -ne $null) {
     Write-Host "Initializing '$($Package.Id) $($Package.Version)'."
       
-    # Copy init files
-    Copy-Item (Join-Path $InstallPath "init\version.txt") (Join-Path $ProjectFullPath "version.txt") -Force | Out-Null
-    $ReadmeFullPath = Copy-Item (Join-Path $InstallPath "init\readme.txt") (Join-Path $ProjectFullPath "readme.txt") -Force -PassThru
+    # Copy version.txt
+    $VersionTxtFullPath = Join-Path $ProjectFullPath "version.txt"
+    if (-not (Test-Path $VersionTxtFullPath)) {
+        Write-Host "Copying 'version.txt'."
+        Copy-Item (Join-Path $InstallPath "init\version.txt") $VersionTxtFullPath -Force
+    }
 
-    # Replace project name in readme.txt
-    (Get-Content $ReadmeFullPath).replace('$projectname$', $Project.Name) | Set-Content $ReadmeFullPath
+    # Copy readme.txt
+    $ReadmeTxtFullPath = Join-Path $ProjectFullPath "readme.txt"
+    if (-not (Test-Path $ReadmeTxtFullPath)) {
+        Write-Host "Copying 'readme.txt'."
+        Copy-Item (Join-Path $InstallPath "init\readme.txt") $ReadmeTxtFullPath -Force
+        # Replace project name in readme.txt
+        (Get-Content $ReadmeTxtFullPath).Replace('$projectname$', $Project.Name) | Set-Content $ReadmeTxtFullPath
+    }
+
+    # Add files to the solution
+    Add-FileToProject $Project $VersionTxtFullPath
+    Add-FileToProject $Project $ReadmeTxtFullPath
 
     # Open the readme.txt
     $Window = $dte.ItemOperations.OpenFile($(Join-Path $InstallPath "readme.txt"))
