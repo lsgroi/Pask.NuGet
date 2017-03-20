@@ -23,6 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{939D2A
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{864FD7E0-718C-4486-AF0A-24958632FFF9}"
+	ProjectSection(SolutionItems) = preProject
+		.build\tasks\Test-PackageInstallation.ps1 = .build\tasks\Test-PackageInstallation.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{73C4FA2B-9E57-4D97-9752-E3F4EA04766D}"
 	ProjectSection(SolutionItems) = preProject

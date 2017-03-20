@@ -11,6 +11,7 @@ if ($Project -eq $null) {
 
 $Solution = Get-Interface $dte.Solution ([EnvDTE80.Solution2])
 $SolutionFullPath = Split-Path -Path $Solution.FullName
+$ProjectFullPath = Split-Path -Path $Project.FullName
 
 $PackagesConfig = Join-Path (Split-Path -Path $Project.FullName) "packages.config"
 [xml]$PackagesXml = Get-Content $PackagesConfig
@@ -19,8 +20,13 @@ $Package = $PackagesXml.packages.package | Where { $_.id -eq $Package.Id -and $_
 # To prevent NuGet Package Manager from running this for every version of the package that happens to be in the packages folder
 if ($Package -ne $null) {
     Write-Host "Initializing '$($Package.Id) $($Package.Version)'."
+      
+    # Copy init files
+    Copy-Item (Join-Path $InstallPath "init\version.txt") (Join-Path $ProjectFullPath "version.txt") -Force | Out-Null
+    $ReadmeFullPath = Copy-Item (Join-Path $InstallPath "init\readme.txt") (Join-Path $ProjectFullPath "readme.txt") -Force -PassThru
 
-    # Code here any initialization
+    # Replace project name in readme.txt
+    (Get-Content $ReadmeFullPath).replace('$projectname$', $Project.Name) | Set-Content $ReadmeFullPath
 
     # Open the readme.txt
     $Window = $dte.ItemOperations.OpenFile($(Join-Path $InstallPath "readme.txt"))

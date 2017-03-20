@@ -50,9 +50,16 @@
     <None Include="version.txt" />
     <None Include="readme.txt" />
     <None Include="tools\Init.ps1" />
-    <None Include="Pask.NuGet.nuspec" />
+    <None Include="Pask.NuGet.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="init\readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="init\version.txt" />
+  </ItemGroup>
   <Target Name="Clean">
     <Exec Command="go.bat Clean" WorkingDirectory="$(SolutionDir)" />
   </Target>
