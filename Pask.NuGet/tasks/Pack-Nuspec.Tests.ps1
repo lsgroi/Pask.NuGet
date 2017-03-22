@@ -11,7 +11,7 @@ Describe "Pack-Nuspec" {
     Context "Pack without symbols package" {
         BeforeAll {
             # Act
-            Invoke-Pask $TestSolutionFullPath -SolutionName ClassLibrary -Task Clean, Build, Pack-Nuspec
+            Invoke-Pask $TestSolutionFullPath -Task Clean, Build, Pack-Nuspec
         }
 
         It "creates the package" {
@@ -37,7 +37,7 @@ Describe "Pack-Nuspec" {
     Context "Pack with symbols package" {
         BeforeAll {
             # Act
-            Invoke-Pask $TestSolutionFullPath -SolutionName ClassLibrary -Task Clean, Build, Pack-Nuspec -CreateSymbolsPackage $true
+            Invoke-Pask $TestSolutionFullPath -Task Clean, Build, Pack-Nuspec -CreateSymbolsPackage $true
         }
 
         It "creates the package" {
@@ -74,7 +74,7 @@ Describe "Pack-Nuspec" {
     Context "Pack including PDB files" {
         BeforeAll {
             # Act
-            Invoke-Pask $TestSolutionFullPath -SolutionName ClassLibrary -Task Clean, Build, Pack-Nuspec -IncludePdb $true
+            Invoke-Pask $TestSolutionFullPath -Task Clean, Build, Pack-Nuspec -IncludePdb $true
         }
 
         It "creates the package" {
