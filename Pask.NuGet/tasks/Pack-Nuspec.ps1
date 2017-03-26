@@ -1,11 +1,11 @@
 ﻿Import-Properties -Project Pask
 Import-Script Properties.MSBuild -Package Pask
 
+Set-Property CreateSymbolsPackage -Default $false
+Set-Property IncludePdb -Default $false
+
 # Synopsis: Create a NuGet package targeting a Nuspec
 Task Pack-Nuspec {
-    Set-Property CreateSymbolsPackage -Default $false
-    Set-Property IncludePdb -Default $false
-
     # Set or not the symbols package flag
     $Symbols = @{$true="-Symbols";$false=""}[$CreateSymbolsPackage -eq $true]
 

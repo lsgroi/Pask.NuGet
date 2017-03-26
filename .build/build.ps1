@@ -11,5 +11,5 @@ Task Test Pack-Nuspec, Test-Pester
 Task PreRelease Version-BuildServer, Clean, Pack-Nuspec, Test
 
 # Synopsis: Release the package
-Task Release Version-BuildServer, Clean, Pack-Nuspec, Test #, Push
+Task Release Version-BuildServer, Clean, Pack-Nuspec, Test, Push
 
