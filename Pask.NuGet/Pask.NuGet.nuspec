@@ -17,7 +17,7 @@
         <copyright>Copyright © 2016 Luca Sgroi under the Apache License</copyright>
         <releaseNotes>https://github.com/lsgroi/Pask.NuGet/wiki/Release‐Notes</releaseNotes>
         <dependencies>
-            <dependency id="Pask" version="0.16.2" />
+            <dependency id="Pask" version="0.17.0" />
         </dependencies>
     </metadata>
     <files>
