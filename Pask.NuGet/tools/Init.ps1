@@ -49,21 +49,21 @@ if ($Package -ne $null) {
     if (-not (Test-Path $VersionTxtFullPath)) {
         Write-Host "Copying 'version.txt'."
         Copy-Item (Join-Path $InstallPath "init\version.txt") $VersionTxtFullPath -Force
-    }
 
-    # Copy readme.txt
-    $ReadmeTxtFullPath = Join-Path $ProjectFullPath "readme.txt"
-    if (-not (Test-Path $ReadmeTxtFullPath)) {
-        Write-Host "Copying 'readme.txt'."
-        Copy-Item (Join-Path $InstallPath "init\readme.txt") $ReadmeTxtFullPath -Force
-        # Replace project name in readme.txt
-        (Get-Content $ReadmeTxtFullPath).Replace('$projectname$', $Project.Name) | Set-Content $ReadmeTxtFullPath
+        # Copy readme.txt (first install only)
+        $ReadmeTxtFullPath = Join-Path $ProjectFullPath "readme.txt"
+        if (-not (Test-Path $ReadmeTxtFullPath)) {
+            Write-Host "Copying 'readme.txt'."
+            Copy-Item (Join-Path $InstallPath "init\readme.txt") $ReadmeTxtFullPath -Force
+            # Replace project name in readme.txt
+            (Get-Content $ReadmeTxtFullPath).Replace('$projectname$', $Project.Name) | Set-Content $ReadmeTxtFullPath
+        }
     }
 
     # Add files to the solution
     Add-FileToProject $Project $VersionTxtFullPath
     Add-FileToProject $Project $ReadmeTxtFullPath
 
-    # Open the readme.txt
-    $Window = $dte.ItemOperations.OpenFile($(Join-Path $InstallPath "readme.txt"))
+    # Save the solution
+    $Solution.SaveAs($Solution.FullName)
 }

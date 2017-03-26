@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
+    <None Include="scripts\Pask.NuGet.Tests.ps1" />
+    <None Include="scripts\Properties.Push.ps1" />
     <None Include="scripts\Properties.ps1" />
     <None Include="scripts\Pask.NuGet.ps1" />
     <None Include="tasks\Push-Local.Tests.ps1" />
@@ -49,7 +51,6 @@
     <None Include="tasks\Push-Local.ps1" />
     <None Include="tasks\Pack-Nuspec.ps1" />
     <None Include="version.txt" />
-    <None Include="readme.txt" />
     <None Include="tools\Init.ps1" />
     <None Include="Pask.NuGet.nuspec">
       <SubType>Designer</SubType>

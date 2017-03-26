@@ -1,0 +1,1 @@
+﻿Set-Property LocalNuGetSource -Default "C:\LocalNuGetSource"

@@ -6,25 +6,24 @@ Describe "Push-Local" {
         # Arrange
         $TestSolutionFullPath = Join-Path $Here "Push-Local"
         Install-NuGetPackage -Name Pask.NuGet
-        $LocalNuGetFeed = Join-Path $TestSolutionFullPath "LocalNuGetFeed"
-        Exec { Robocopy (Join-Path "$TestSolutionFullPath" ".build\test") (Join-Path "$TestSolutionFullPath" ".build\output") "*.nupkg" /256 /XO /NP /NFL /NDL /NJH /NJS } (0..7)
+        $LocalNuGetSource = Join-Path $TestSolutionFullPath "LocalNuGetSource"
+        if (Test-Path $LocalNuGetSource) {
+            Remove-ItemSilently $LocalNuGetSource
+        }
     }
 
-    Context "Push package with symbols to local feed" {
+    Context "Push package without symbols to local feed" {
         BeforeAll {
             # Arrange
-            Remove-ItemSilently $LocalNuGetFeed
+            Remove-ItemSilently (Join-Path $TestSolutionFullPath ".build\output")
+            Exec { Robocopy (Join-Path "$TestSolutionFullPath" ".build\test") (Join-Path "$TestSolutionFullPath" ".build\output") "ClassLibrary.3.2.0.nupkg" /256 /XO /NP /NFL /NDL /NJH /NJS } (0..7)
             
             # Act
-            Invoke-Pask $TestSolutionFullPath -Task Push-Local -LocalNuGetFeed $LocalNuGetFeed
+            Invoke-Pask $TestSolutionFullPath -Task Push-Local -LocalNuGetSource $LocalNuGetSource
         }
 
         It "pushes the package" {
-            Join-Path $LocalNuGetFeed "ClassLibrary.3.2.0.nupkg" | Should Exist
-        }
-
-        It "pushes the symbols package" {
-            Join-Path $LocalNuGetFeed "ClassLibrary.3.2.0.symbols.nupkg" | Should Exist
+            Join-Path $LocalNuGetSource "ClassLibrary.3.2.0.nupkg" | Should Exist
         }
     }
 }
