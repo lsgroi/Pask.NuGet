@@ -1,5 +1,7 @@
 ﻿Import-Properties -Package Pask.NuGet
-Import-Script Properties.Push, Pask.NuGet -Package Pask.NuGet
+Import-Script Pask.NuGet -Package Pask.NuGet
+
+Set-Property LocalNuGetSource -Default "C:\LocalNuGetSource"
 
 # Synopsis: Push the NuGet package(s) to a local NuGet feed
 Task Push-Local {   

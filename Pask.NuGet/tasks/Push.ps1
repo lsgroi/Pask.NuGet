@@ -1,8 +1,8 @@
 ﻿Import-Properties -Package Pask.NuGet
 Import-Script Pask.NuGet -Package Pask.NuGet
 
-Set-Property PushSource -Default ""
-Set-Property ApiKey -Default ""
+Set-Property NuGetSource -Default ""
+Set-Property NuGetApiKey -Default ""
 Set-Property SymbolSource -Default ""
 Set-Property SymbolApiKey -Default ""
 
@@ -12,17 +12,17 @@ Task Push {
 
     if (-not $Packages) {
         Write-BuildMessage "NuGet packages not found" -ForegroundColor "Yellow"
-    } elseif($PushSource -and $ApiKey -and $SymbolSource -and $SymbolApiKey) {
-	    Exec { Push-Package $Packages -Source $PushSource -ApiKey $ApiKey -SymbolSource $SymbolSource -SymbolApiKey $SymbolApiKey }
-    } elseif($PushSource -and $ApiKey -and $SymbolSource) {
-	    Exec { Push-Package $Packages -Source $PushSource -ApiKey $ApiKey -SymbolSource $SymbolSource }
-    } elseif($PushSource -and $ApiKey) {
-	    Exec { Push-Package $Packages -Source $PushSource -ApiKey $ApiKey }
-    } elseif($ApiKey) {
-	    Exec { Push-Package $Packages -ApiKey $ApiKey }
-    } elseif($PushSource) {
-	    Exec { Push-Package $Packages -Source $PushSource }
+    } elseif($NuGetSource -and $NuGetApiKey -and $SymbolSource -and $SymbolApiKey) {
+	    Exec { Push-Package $Packages -Source $NuGetSource -ApiKey $NuGetApiKey -SymbolSource $SymbolSource -SymbolApiKey $SymbolApiKey }
+    } elseif($NuGetSource -and $NuGetApiKey -and $SymbolSource) {
+	    Exec { Push-Package $Packages -Source $NuGetSource -ApiKey $NuGetApiKey -SymbolSource $SymbolSource }
+    } elseif($NuGetSource -and $NuGetApiKey) {
+	    Exec { Push-Package $Packages -Source $NuGetSource -ApiKey $NuGetApiKey }
+    } elseif($NuGetApiKey) {
+	    Exec { Push-Package $Packages -ApiKey $NuGetApiKey }
+    } elseif($NuGetSource) {
+	    Exec { Push-Package $Packages -Source $NuGetSource }
     } else {
-        throw "Cannot Push without PushSource or ApiKey"
+        throw "Cannot Push without NuGetSource or NuGetApiKey"
     }
 }
