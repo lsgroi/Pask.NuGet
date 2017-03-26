@@ -29,6 +29,7 @@ function Add-FileToProject {
     if (($Project.ProjectItems | Where { $_.FileNames(1) -eq $File }) -eq $null) {
 		Write-Host "Adding '$FileName' to project '$($Project.Name)'."
 		$Project.ProjectItems.AddFromFile($File) | Out-Null
+        $($Project.ProjectItems | Where { $_.FileNames(1) -eq $File }).Properties.Item("BuildAction").Value = 0
     }
 }
 

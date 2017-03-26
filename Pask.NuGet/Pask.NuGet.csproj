@@ -45,6 +45,8 @@
     <None Include="scripts\Pask.NuGet.Tests.ps1" />
     <None Include="scripts\Properties.ps1" />
     <None Include="scripts\Pask.NuGet.ps1" />
+    <None Include="tasks\Pack.Tests.ps1" />
+    <None Include="tasks\Pack.ps1" />
     <None Include="tasks\Push.ps1" />
     <None Include="tasks\Push-Local.Tests.ps1" />
     <None Include="tasks\Pack-Nuspec.Tests.ps1" />

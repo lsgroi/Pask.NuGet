@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ED57E33D-8375-4937-9212-2B18C780CA59}</ProjectGuid>
+    <ProjectGuid>{F9588DBD-FD1D-409F-A710-3A06F3A67F58}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClassLibrary</RootNamespace>
@@ -44,10 +44,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassLibrary.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="readme.txt" />
     <None Include="version.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

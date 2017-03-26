@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary", "ClassLibrary\ClassLibrary.csproj", "{F9588DBD-FD1D-409F-A710-3A06F3A67F58}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{8515D5B8-713C-4B17-B2F1-71FA170B06B6}"
+	ProjectSection(SolutionItems) = preProject
+		.build\build.ps1 = .build\build.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tasks", "tasks", "{9A11F5F3-058E-4FB9-A969-F7DFD2B0CC9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B1E1DD8E-0055-4FE2-8B04-4F3775DFB74C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9588DBD-FD1D-409F-A710-3A06F3A67F58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9588DBD-FD1D-409F-A710-3A06F3A67F58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9588DBD-FD1D-409F-A710-3A06F3A67F58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9588DBD-FD1D-409F-A710-3A06F3A67F58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9A11F5F3-058E-4FB9-A969-F7DFD2B0CC9A} = {8515D5B8-713C-4B17-B2F1-71FA170B06B6}
+		{B1E1DD8E-0055-4FE2-8B04-4F3775DFB74C} = {8515D5B8-713C-4B17-B2F1-71FA170B06B6}
+	EndGlobalSection
+EndGlobal
