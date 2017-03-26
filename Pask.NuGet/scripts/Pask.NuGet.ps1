@@ -51,10 +51,8 @@ function script:Push-Package {
 
     foreach($Package in $Packages) {
         switch ($PsCmdlet.ParameterSetName) {
-            "DefaultPushSource"  { Exec { & (Get-NuGetExe) push "$Package" -NonInteractive } }
-            "DefaultPushSourceWithKey" { Exec { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -NonInteractive } }
-            "Source"  { Exec { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
-            "SourceWithKey" { Exec { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
+            { ($_ -eq "DefaultPushSource") -or ($_ -eq "Source") }  { Exec { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
+            { ($_ -eq "SourceWithKey") -or ($_ -eq "DefaultPushSourceWithKey") } { Exec { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
             "SourceAndSymbol"  { Exec { & (Get-NuGetExe) push "$Package" -Source $Source -SymbolSource $SymbolSource  -NonInteractive } }
             "SourceAndSymbolWithKey" { Exec { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolSource $SymbolSource -NonInteractive } }
             "SourceAndSymbolWithKeys" { Exec { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolApiKey $SymbolApiKey -SymbolSource $SymbolSource -NonInteractive } }
