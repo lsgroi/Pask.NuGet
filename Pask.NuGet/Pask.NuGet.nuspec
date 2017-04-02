@@ -15,9 +15,9 @@
         <description>A Pask extension which provides NuGet functionality to create and publish a package.</description>
         <tags>Invoke-Build PowerShell BuildAutomation Pask NuGet</tags>
         <copyright>Copyright © 2016 Luca Sgroi under the Apache License</copyright>
-        <releaseNotes>https://github.com/lsgroi/Pask.NuGet/wiki/Release‐Notes</releaseNotes>
+        <releaseNotes>https://github.com/lsgroi/Pask.NuGet/releases</releaseNotes>
         <dependencies>
-            <dependency id="Pask" version="0.17.0" />
+            <dependency id="Pask" version="0.21.0" />
         </dependencies>
     </metadata>
     <files>

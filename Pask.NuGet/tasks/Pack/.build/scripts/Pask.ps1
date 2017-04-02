@@ -121,6 +121,61 @@ function script:Refresh-BuildProperties {
 Set-Alias Refresh-Properties Refresh-BuildProperties -Scope Script
 
 <#
+.SYNOPSIS
+    Gets or set cache entries
+
+.PARAMETER Key <string>
+    The cache key
+
+.PARAMETER Value
+    The cache value
+
+.OUTPUTS
+    None
+
+.EXAMPLE
+    Set a cache key with the current function name
+    Pask-Cache $MyInvocation.MyCommand.Name -Value 1
+
+.EXAMPLE
+    Get a cache entry for the current function name
+    Pask-Cache $MyInvocation.MyCommand.Name
+
+.EXAMPLE
+    Get all cache entries
+    Pask-Cache
+#>
+function script:Pask-Cache {
+    [CmdletBinding(DefaultParameterSetName="All")] 
+    param(
+        [Parameter(Position=0)]
+        [Parameter(Mandatory=$true,ParameterSetName="Get")]
+        [Parameter(Mandatory=$true,ParameterSetName="Set")]
+        [string]$Key, 
+        
+        [Parameter(Mandatory=$true,ParameterSetName="Set")]
+        $Value
+    )
+
+    switch ($PsCmdlet.ParameterSetName) {
+        "All" {
+            ${!PaskCache!}.GetEnumerator() | Foreach -Begin { $Result = @{} } -Process { $Result.Add($_.Name, $_.Value) } -End { return $Result }
+        }
+        "Get" { 
+            return ${!PaskCache!}.$Key 
+        }
+        "Set" {
+            if (${!PaskCache!}.$Key) {
+                ${!PaskCache!}.$Key = $Value
+            } else {
+                ${!PaskCache!} = ${!PaskCache!} + @{$Key=$Value}
+            }
+            ${script:!PaskCache!} = ${!PaskCache!}
+        }
+    }
+}
+
+<#
 .SYNOPSIS 
    Creates a new directory, if not found
 
@@ -219,7 +274,10 @@ function script:Initialize-NuGetExe {
    The full path
 #> 
 function script:Get-PackagesDir {
-    $PackagesDir = Join-Path $PaskFullPath "packages" 
+    if(Pask-Cache $MyInvocation.MyCommand.Name) {
+        return Pask-Cache $MyInvocation.MyCommand.Name
+    }
+    $PackagesDir = Join-Path $PaskFullPath "packages"
     $NuGet = Get-NuGetExe
     if (Test-Path $NuGet) {
         Push-Location -Path (Split-Path $NuGet)
@@ -233,6 +291,7 @@ function script:Get-PackagesDir {
             Pop-Location
         }
     }
+    Pask-Cache $MyInvocation.MyCommand.Name -Value $PackagesDir
     return $PackagesDir
 }
 
@@ -297,28 +356,36 @@ function script:Write-BuildMessage {
         [string]$BackgroundColor,
         [string]$ForegroundColor
     )
-
+    
     if ($psISE) {
         $OriginalBackgroundColor = $psISE.Options.ConsolePaneBackgroundColor
         $OriginalForegroundColor = $psISE.Options.ConsolePaneForegroundColor
-        try {
-            $psISE.Options.ConsolePaneBackgroundColor = if ($BackgroundColor) { [System.Windows.Media.Colors]::$BackgroundColor } else { $OriginalBackgroundColor }
-            $psISE.Options.ConsolePaneForegroundColor = if ($ForegroundColor) { [System.Windows.Media.Colors]::$ForegroundColor } else { $OriginalForegroundColor }
+        if (-not $OriginalBackgroundColor -and -not $OriginalForegroundColor) {
             $Message
-        } finally {
-            $psISE.Options.ConsolePaneBackgroundColor = $OriginalBackgroundColor
-            $psISE.Options.ConsolePaneForegroundColor = $OriginalForegroundColor
+        } else {
+            try {
+                $psISE.Options.ConsolePaneBackgroundColor = if ($BackgroundColor) { [System.Windows.Media.Colors]::$BackgroundColor } else { $OriginalBackgroundColor }
+                $psISE.Options.ConsolePaneForegroundColor = if ($ForegroundColor) { [System.Windows.Media.Colors]::$ForegroundColor } else { $OriginalForegroundColor }
+            } finally {
+                $Message
+                $psISE.Options.ConsolePaneBackgroundColor = $OriginalBackgroundColor
+                $psISE.Options.ConsolePaneForegroundColor = $OriginalForegroundColor
+            }
         }
     } else {
         $OriginalBackgroundColor = $Host.UI.RawUI.BackgroundColor
         $OriginalForegroundColor = $Host.UI.RawUI.ForegroundColor
-        try {
-            $Host.UI.RawUI.BackgroundColor = if ($BackgroundColor) { $BackgroundColor } else { $OriginalBackgroundColor }
-            $Host.UI.RawUI.ForegroundColor = if ($ForegroundColor) { $ForegroundColor } else { $OriginalForegroundColor }
+        if (-not $OriginalBackgroundColor -and -not $OriginalForegroundColor) {
             $Message
-        } finally {
-            $Host.UI.RawUI.BackgroundColor = $OriginalBackgroundColor
-            $Host.UI.RawUI.ForegroundColor = $OriginalForegroundColor
+        } else {
+            try {
+                $Host.UI.RawUI.BackgroundColor = if ($BackgroundColor) { $BackgroundColor } else { $OriginalBackgroundColor }
+                $Host.UI.RawUI.ForegroundColor = if ($ForegroundColor) { $ForegroundColor } else { $OriginalForegroundColor }
+            } finally {
+                $Message
+                $Host.UI.RawUI.BackgroundColor = $OriginalBackgroundColor
+                $Host.UI.RawUI.ForegroundColor = $OriginalForegroundColor
+            }
         }
     }
 }
@@ -708,7 +775,8 @@ function script:Set-Project {
     }
 
     Set-BuildProperty -Name ProjectFullName -Value (Get-ProjectFullName)
-    Set-BuildProperty -Name ArtifactFullPath -Value (Join-Path $BuildOutputFullPath $script:ProjectName)
+    Set-BuildProperty -Name ArtifactName -Default $script:ProjectName
+    Set-BuildProperty -Name ArtifactFullPath -Value { Join-Path $BuildOutputFullPath $ArtifactName }
 
     Refresh-Properties
 }
@@ -1016,12 +1084,19 @@ function script:Get-ProjectSemanticVersion {
    Invokes tasks in parallel
 
 .PARAMETER Task <string[]>
+   One or more tasks to be invoked in parallel
 
 .PARAMETER Result
    Tells to output build information using a variable.
 
-.PARAMETER TaskProperties <string[]>
+.PARAMETER TaskProperties
    Custom properties which overrides the existings when name matches
+
+.PARAMETER $MaximumBuilds
+   Maximum overall build time in milliseconds.
+
+.PARAMETER Result
+   Tells to output build information using a variable.
 
 .OUTPUTS
    Output of invoked builds and other log messages
@@ -1033,11 +1108,13 @@ function script:Jobs {
     param(
         [Parameter(Position=0)][string[]]$Task,
         $Result,
-        [Parameter(ValueFromRemainingArguments=$true)][string[]]$TaskProperties
+        [int]$Timeout=[int]::MaxValue,
+	    [int]$MaximumBuilds=[Environment]::ProcessorCount,
+        [Parameter(ValueFromRemainingArguments=$true)]$TaskProperties
     )
 
-    # Create the list of properties for the new parallel build script
-    $Properties = ${!BuildProperties!}
+    # Create the list of properties for the new parallel build scripts
+    $Properties = Get-BuildProperties
     for ($i=0; $i -lt $TaskProperties.Count; $i+=2) {
         $Key = ($TaskProperties[$i] -replace '^-+') 
         $Value = $TaskProperties[$i+1]
@@ -1048,8 +1125,8 @@ function script:Jobs {
         }
     }
 
-    # Create the parallel build script
-    $ParallelBuildScript = New-Item -ItemType File -Name "$([System.IO.Path]::GetRandomFileName()).ps1" -Path $Env:Temp -Value {
+    # Body of parallel build script
+    $ParallelBuildScript = {
         param(
             [Alias("Files")] $private:Files,
             [Alias("Properties")] $private:Properties=@{}
@@ -1070,16 +1147,25 @@ function script:Jobs {
         . "$(Join-Path $BuildFullPath "build.ps1")"
     }
 
-    # Invoke to parallel tasks
-    Invoke-Builds @(@{File=$ParallelBuildScript.FullName; Task=$Task; Result="!BuildsResult!"; "private:Files"=(Get-Files); "private:Properties"=$Properties})
+    # Create the parallel builds
+    $Build = $Task | ForEach {
+        $BuildFile = New-Item -ItemType File -Name "$([System.IO.Path]::GetRandomFileName()).ps1" -Path $Env:Temp -Value $ParallelBuildScript
+        return @{File=$BuildFile.FullName; Task=$_; "private:Files"=(Get-Files); "private:Properties"=$Properties}
+    }
+
+    # Invoke the builds in parallel
+    Invoke-Builds $Build `
+                  -Result "!InvokeBuildsResult!" `
+                  -Timeout $Timeout `
+                  -MaximumBuilds $MaximumBuilds
 
     # Output build information using a variable
     if ($Result -and $Result -is [string]) {
-        New-Variable -Name $Result -Force -Scope 1 -Value ${!BuildsResult!}
+        New-Variable -Name $Result -Force -Scope 1 -Value ${!InvokeBuildsResult!}
     } elseif ($Result) {
-        $Result.Value = ${!BuildsResult!}
+        $Result.Value = ${!InvokeBuildsResult!}
     }
 
-    # Remove the parallel build script
-    Remove-Item "$($ParallelBuildScript.FullName)" -Force
+    # Remove the parallel build scripts
+    $Build | ForEach { Remove-Item $_.File -Force }
 }
