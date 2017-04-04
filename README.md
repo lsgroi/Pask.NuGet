@@ -7,3 +7,5 @@
 
 This [Pask extension](https://github.com/lsgroi/Pask/wiki/Extensions) provides NuGet functionality to create, publish and maintain a package.  
 See the [Wiki](https://github.com/lsgroi/Pask.NuGet/wiki) for full documentation.
+
+Pask.Nuget is Copyright &copy; 2017 Luca Sgroi under the [Apache License](LICENSE.txt).
