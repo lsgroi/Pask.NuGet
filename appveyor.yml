@@ -6,6 +6,7 @@
       - master
   init:
     - git config --global core.autocrlf true
+  image: Visual Studio 2017
   skip_tags: true
   version: '{build}'
   environment:
@@ -28,6 +29,7 @@
       - master
   init:
     - git config --global core.autocrlf true
+  image: Visual Studio 2017
   skip_tags: true
   version: '{build}'
   build_script:
