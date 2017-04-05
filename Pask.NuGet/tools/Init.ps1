@@ -58,12 +58,12 @@ if ($Package -ne $null) {
             Copy-Item (Join-Path $InstallPath "init\readme.txt") $ReadmeTxtFullPath -Force
             # Replace project name in readme.txt
             (Get-Content $ReadmeTxtFullPath).Replace('$projectname$', $Project.Name) | Set-Content $ReadmeTxtFullPath
+            Add-FileToProject $Project $ReadmeTxtFullPath
         }
     }
 
     # Add files to the solution
     Add-FileToProject $Project $VersionTxtFullPath
-    Add-FileToProject $Project $ReadmeTxtFullPath
 
     # Save the solution
     $Solution.SaveAs($Solution.FullName)
