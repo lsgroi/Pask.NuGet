@@ -1,5 +1,6 @@
 ﻿Set-Property GitHubOwner -Value "lsgroi"
 Set-Property GitHubRepo -Value $ProjectName
+
 Import-Script Pask.NuGet -Project Pask.NuGet
 Import-Task Clean, Version-BuildServer, Pack-Nuspec, Test-Pester, Push-Local, Push, Test-PackageInstallation, New-GitHubRelease
 

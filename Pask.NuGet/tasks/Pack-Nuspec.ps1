@@ -1,4 +1,4 @@
-﻿Import-Properties -Project Pask
+﻿Import-Properties -Package Pask.NuGet
 Import-Script Properties.MSBuild -Package Pask
 
 Set-Property CreateSymbolsPackage -Default $false

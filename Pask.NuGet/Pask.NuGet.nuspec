@@ -12,9 +12,9 @@
         <projectUrl>https://github.com/lsgroi/Pask.NuGet</projectUrl>
         <iconUrl>https://raw.githubusercontent.com/lsgroi/Pask/master/Pask.png</iconUrl>
         <summary>Pask extension which provides NuGet functionality to create and publish a package.</summary>
-        <description>A Pask extension which provides NuGet functionality to create and publish a package.</description>
+        <description>Pask extension which provides NuGet functionality to create and publish a package.</description>
         <tags>Invoke-Build PowerShell BuildAutomation Pask NuGet</tags>
-        <copyright>Copyright © 2016 Luca Sgroi under the Apache License</copyright>
+        <copyright>Copyright © 2017 Luca Sgroi under the Apache License</copyright>
         <releaseNotes>https://github.com/lsgroi/Pask.NuGet/releases</releaseNotes>
         <dependencies>
             <dependency id="Pask" version="0.22.1" />
