@@ -11,8 +11,8 @@
         <licenseUrl>https://github.com/lsgroi/Pask.NuGet/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/lsgroi/Pask.NuGet</projectUrl>
         <iconUrl>https://raw.githubusercontent.com/lsgroi/Pask/master/Pask.png</iconUrl>
-        <summary>Pask extension which provides NuGet functionality to create and publish a package.</summary>
-        <description>Pask extension which provides NuGet functionality to create and publish a package.</description>
+        <summary>Pask extension that provides NuGet functionality to create and publish a package.</summary>
+        <description>Pask extension that provides NuGet functionality to create and publish a package.</description>
         <tags>PowerShell Build Automation Script Invoke-Build NuGet Pask</tags>
         <copyright>Copyright © 2017 Luca Sgroi under the Apache License</copyright>
         <releaseNotes>https://github.com/lsgroi/Pask.NuGet/releases</releaseNotes>
