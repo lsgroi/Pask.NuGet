@@ -2,125 +2,132 @@
 $Sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace "\.Tests\.", "."
 . "$Here\$Sut"
 
-# Enable this test after upgrading to Pester 4.0
-# There is currently a problem with Mocks which are somehow persisting outside the Describe/Context
+Describe "Push-Package" {
+    Context "Push a package" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
 
-#Describe "Push-Package" {
-#    BeforeAll {
-#        # Arrange
-#        function Exec { param([scriptblock]$Command) }
-#        function Get-NuGetExe { return "NuGet.exe" }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg"
+        }
 
-#    Context "Push a package" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
+        It "pushes the package to the default source" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg"
-#        }
+    Context "Push two packages" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
 
-#        It "pushes the package to the default source" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg", "Bar.0.1.0.nupkg" 
+        }
 
-#    Context "Push two packages" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
+        It "pushes both packages to the default source" {
+            Assert-MockCalled Exec 2
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg", "Bar.0.1.0.nupkg" 
-#        }
+    Context "Push a package with API key" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
 
-#        It "pushes both packages to the default source" {
-#            Assert-MockCalled Exec 2
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -ApiKey "123"
+        }
 
-#    Context "Push a package with API key" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
+        It "pushes the package to the default source with API key" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -ApiKey "123"
-#        }
+    Context "Push a package to a source" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
 
-#        It "pushes the package to the default source with API key" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -Source "myget"
+        }
 
-#    Context "Push a package to a source" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -NonInteractive } }
+        It "pushes the package to the given source" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -Source "myget"
-#        }
+    Context "Push a package to a source with API key" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
 
-#        It "pushes the package to the given source" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -ApiKey "123"
+        }
 
-#    Context "Push a package to a source with API key" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -NonInteractive } }
+        It "pushes the package to the given source with API key" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -ApiKey "123"
-#        }
+    Context "Push a package to a source and symbol source" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -SymbolSource $SymbolSource  -NonInteractive } }
 
-#        It "pushes the package to the given source with API key" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols"
+        }
 
-#    Context "Push a package to a source and symbol source" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -Source $Source -SymbolSource $SymbolSource  -NonInteractive } }
+        It "pushes the package to the given source and symbol source" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols"
-#        }
+    Context "Push a package to a source with API key and symbol source" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolSource $SymbolSource -NonInteractive } }
 
-#        It "pushes the package to the given source and symbol source" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols" -ApiKey "123"
+        }
 
-#    Context "Push a package to a source with API key and symbol source" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolSource $SymbolSource -NonInteractive } }
+        It "pushes the package to the given source with API key and symbol source" {
+            Assert-MockCalled Exec 1
+        }
+    }
 
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols" -ApiKey "123"
-#        }
+    Context "Push a package to a source and symbol source with API keys" {
+        BeforeAll {
+            # Arrange
+            function Exec { param([scriptblock]$Command) }
+            function Get-NuGetExe { return "NuGet.exe" }
+            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolApiKey $SymbolApiKey -SymbolSource $SymbolSource -NonInteractive } }
 
-#        It "pushes the package to the given source with API key and symbol source" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
+            # Act
+            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols" -ApiKey "123" -SymbolApiKey "456"
+        }
 
-#    Context "Push a package to a source and symbol source with API keys" {
-#        BeforeAll {
-#            # Arrange
-#            Mock Exec {} -ParameterFilter { $Command -like { & (Get-NuGetExe) push "$Package" -ApiKey $ApiKey -Source $Source -SymbolApiKey $SymbolApiKey -SymbolSource $SymbolSource -NonInteractive } }
-
-#            # Act
-#            Push-Package "Foo.0.1.0.nupkg" -Source "myget" -SymbolSource "myget.symbols" -ApiKey "123" -SymbolApiKey "456"
-#        }
-
-#        It "pushes the package to the given source and symbol source with API keys" {
-#            Assert-MockCalled Exec 1
-#        }
-#    }
-#}
+        It "pushes the package to the given source and symbol source with API keys" {
+            Assert-MockCalled Exec 1
+        }
+    }
+}
