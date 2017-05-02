@@ -9,7 +9,7 @@ Describe "Pack" {
     }
 
     Context "Create a package without symbols package" {
-        BeforeAll {            
+        BeforeAll {
             # Act
             Invoke-Pask $TestSolutionFullPath -Task Clean, Build, New-Artifact, Pack -RemoveArtifactPDB $false
         }
@@ -34,7 +34,7 @@ Describe "Pack" {
     }
 
     Context "Create a package and symbols package" {
-        BeforeAll {            
+        BeforeAll {
             # Act
             Invoke-Pask $TestSolutionFullPath -Task Clean, Build, New-Artifact, Pack -CreateSymbolsPackage $true -RemoveArtifactPDB $false
         }
@@ -66,6 +66,20 @@ Describe "Pack" {
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.pdb" | Should Exist
             Join-Path $PackageExtractedFullPath "src\ClassLibrary\Class1.cs" | Should Exist
+        }
+    }
+
+    Context "Create a package without default semantic version" {
+        BeforeAll {
+            # Arrange
+            $PackageVersion = Get-Version
+
+            # Act
+            Invoke-Pask $TestSolutionFullPath -Task Clean, Build, New-Artifact, Pack -ProjectName ClassLibrary.Other
+        }
+
+        It "creates the package with default Pask version" {
+            Join-Path $TestSolutionFullPath (".build\output\ClassLibrary.Other.{0}.nupkg" -f $PackageVersion.SemVer) | Should Exist
         }
     }
 }
