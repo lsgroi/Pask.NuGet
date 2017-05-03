@@ -82,4 +82,18 @@ Describe "Pack" {
             Join-Path $TestSolutionFullPath (".build\output\ClassLibrary.Other.{0}.nupkg" -f $PackageVersion.SemVer) | Should Exist
         }
     }
+
+    Context "Create a package changing the dafault project using semantic version" {
+        BeforeAll {
+            # Arrange
+            $PackageVersion = Get-Version
+
+            # Act
+            Invoke-Pask $TestSolutionFullPath -Task Pack-ClassLibrary -ProjectName ClassLibrary.Other
+        }
+
+        It "creates the package with semantic version" {
+            Join-Path $TestSolutionFullPath (".build\output\ClassLibrary.3.6.0.nupkg" -f $PackageVersion.SemVer) | Should Exist
+        }
+    }
 }

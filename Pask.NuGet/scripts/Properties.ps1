@@ -1,5 +1,9 @@
 ﻿Import-Properties -Package Pask
 
-if(Test-Path (Join-Path $ProjectFullPath "version.txt")) {
-    Set-Property Version -Value (Get-ProjectSemanticVersion)
+Set-Property Version -Value {
+    if(Test-Path (Join-Path $ProjectFullPath "version.txt")) {
+        return (Get-ProjectSemanticVersion)
+    } else {
+        $Version
+    }
 }
