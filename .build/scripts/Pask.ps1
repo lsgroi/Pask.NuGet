@@ -233,15 +233,18 @@ function script:Remove-ItemSilently {
 
         $ItemObject = Get-Item -Path $Item
 
-        if ($ItemObject -is [System.IO.FileInfo]) {
+        if ($ItemObject -is [System.IO.FileInfo] -and (Test-Path $ItemObject.FullName)) {
             Remove-Item -Path $ItemObject.FullName -Force | Out-Null
-        } elseif ($ItemObject -is [System.IO.DirectoryInfo]) {
-            # Ensure removal of directories exceeding the 260 characters limit
-            Get-ChildItem -Path $ItemObject -Recurse `
-                | Sort -Descending @{Expression = {$_.FullName.Length}} `
-                | Select -ExpandProperty FullName `
-                | Remove-ItemSilently
-            CMD /C ("RD /S /Q ""{0}""" -f $ItemObject.FullName)
+        } elseif ($ItemObject -is [System.IO.DirectoryInfo] -and (Test-Path $ItemObject.FullName)) {
+            $Count = 0
+            $Retry = 10
+            do {
+                $Count++
+                try { CMD /C ("RD /S /Q ""{0}""" -f $ItemObject.FullName) 2>&1 | Out-Null } catch { }
+            } while ((Test-Path $ItemObject.FullName) -and $Count -lt $Retry)
+            if ($Count -eq $Retry -and (Test-Path $ItemObject.FullName)) {
+                throw ("Failed to remove {0}" -f $ItemObject.FullName)
+            }
         } else {
             $ItemObject.FullName | Remove-ItemSilently
         }
@@ -287,9 +290,7 @@ function script:Initialize-NuGetExe {
    The full path
 #> 
 function script:Get-PackagesDir {
-    if(Pask-Cache $MyInvocation.MyCommand.Name) {
-        return Pask-Cache $MyInvocation.MyCommand.Name
-    }
+    if(Pask-Cache $MyInvocation.MyCommand.Name) { return Pask-Cache $MyInvocation.MyCommand.Name }
     $PackagesDir = Join-Path $PaskFullPath "packages"
     $NuGet = Get-NuGetExe
     if (Test-Path $NuGet) {
@@ -335,10 +336,12 @@ function script:Restore-NuGetDevelopmentPackages {
     $PackagesDir = Get-PackagesDir
     $NuGetExe = Get-NuGetExe
     Get-SolutionPackages | Where { $_.developmentDependency -eq $true } | ForEach {
-        Invoke-Command -ErrorAction Stop -ScriptBlock { & $NuGetExe install $_.id -Version $_.version -OutputDirectory "$PackagesDir" -NonInteractive -Verbosity quiet }
-        if ($LastExitCode) {
-            Write-BuildMessage -Message "Error restoring NuGet package $($_.id).$($_.version)" -ForegroundColor "Red"
-            exit $LastExitCode
+        if(-not (Test-Path (Get-PackageDir $_.id))) {
+            Invoke-Command -ErrorAction Stop -ScriptBlock { & $NuGetExe install $_.id -Version $_.version -OutputDirectory "$PackagesDir" -NonInteractive -Verbosity quiet }
+            if ($LastExitCode) {
+                Write-BuildMessage -Message "Error restoring NuGet package $($_.id).$($_.version)" -ForegroundColor "Red"
+                exit $LastExitCode
+            }
         }
     }
 }
@@ -437,6 +440,7 @@ function script:Get-ProjectFullName {
    )
 #>
 function script:Get-SolutionProjects {
+    if(Pask-Cache $MyInvocation.MyCommand.Name) { return Pask-Cache $MyInvocation.MyCommand.Name }
     $Projects = @()
     Get-Content "$SolutionFullName" |
     Select-String 'Project\(' |
@@ -451,6 +455,7 @@ function script:Get-SolutionProjects {
                 }
             }
         }
+    Pask-Cache $MyInvocation.MyCommand.Name -Value $Projects
     return $Projects
 }
 
@@ -468,6 +473,8 @@ function script:Get-SolutionProjects {
    )
 #>
 function script:Get-SolutionPackages {
+    if(Pask-Cache $MyInvocation.MyCommand.Name) { return Pask-Cache $MyInvocation.MyCommand.Name }
+    
     $Packages = @()
 
     foreach($Project in Get-SolutionProjects) {
@@ -477,7 +484,9 @@ function script:Get-SolutionPackages {
         }
     }
 
-    return ($Packages | Select -Unique id, version, developmentDependency | Sort id, version)
+    $SolutionPackages = $Packages | Select -Unique id, version, developmentDependency | Sort id, version
+    Pask-Cache $MyInvocation.MyCommand.Name -Value $SolutionPackages
+    return $SolutionPackages
 }
 
 <#

@@ -15,18 +15,18 @@ Describe "Pack-Nuspec" {
         }
 
         It "creates the package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg" | Should Exist
         }
 
         It "does not create the symbols package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.symbols.nupkg" | Should Not Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.symbols.nupkg" | Should Not Exist
         }
 
         It "should pack the files defined in the Nuspec excluding PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\*.pdb" | Should Not Exist
@@ -41,18 +41,18 @@ Describe "Pack-Nuspec" {
         }
 
         It "creates the package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg" | Should Exist
         }
 
         It "creates the symbols package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.symbols.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.symbols.nupkg" | Should Exist
         }
 
         It "the package should contain the files defined in the Nuspec excluding PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.pdb" | Should Not Exist
@@ -61,9 +61,9 @@ Describe "Pack-Nuspec" {
 
         It "the symbols package should contain the files defined in the Nuspec including PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.symbols.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.symbols"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.symbols.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.pdb" | Should Exist
@@ -78,18 +78,18 @@ Describe "Pack-Nuspec" {
         }
 
         It "creates the package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg" | Should Exist
         }
 
         It "does not create the symbols package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.symbols.nupkg" | Should Not Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.symbols.nupkg" | Should Not Exist
         }
 
         It "should pack the files defined in the Nuspec including PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.2.1.0*.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.pdb" | Should Exist

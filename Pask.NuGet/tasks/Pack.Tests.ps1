@@ -15,18 +15,18 @@ Describe "Pack" {
         }
 
         It "creates the package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.nupkg" | Should Exist
         }
 
         It "does not create the symbols package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.symbols.nupkg" | Should Not Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.symbols.nupkg" | Should Not Exist
         }
 
         It "the package should contain the assemblies and should not contain the PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\*.pdb" | Should Not Exist
@@ -40,18 +40,18 @@ Describe "Pack" {
         }
 
         It "creates the package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.nupkg" | Should Exist
         }
 
         It "creates the symbols package" {
-            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.symbols.nupkg" | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.symbols.nupkg" | Should Exist
         }
 
         It "the package should contain the assemblies and should not contain the PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\*.pdb" | Should Not Exist
@@ -59,9 +59,9 @@ Describe "Pack" {
 
         It "the symbols package should contain the assemblies and PDB files" {
             $7za = Join-Path (Get-PackageDir "7-Zip.CommandLine") "tools\7za.exe"
-            $Package = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.symbols.nupkg"
-            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0.symbols"
-            Exec { & "$7za" x "$Package" -aoa "-o$PackageExtractedFullPath" | Out-Null }
+            $Package = Get-Item -Path (Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.symbols.nupkg")
+            $PackageExtractedFullPath = Join-Path $TestSolutionFullPath (".build\output\{0}" -f $Package.BaseName)
+            Exec { & "$7za" x ("{0}" -f $Package.FullName) -aoa "-o$PackageExtractedFullPath" | Out-Null }
             
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.dll" | Should Exist
             Join-Path $PackageExtractedFullPath "lib\net462\ClassLibrary.pdb" | Should Exist
@@ -93,7 +93,21 @@ Describe "Pack" {
         }
 
         It "creates the package with semantic version" {
-            Join-Path $TestSolutionFullPath (".build\output\ClassLibrary.3.6.0.nupkg" -f $PackageVersion.SemVer) | Should Exist
+            Join-Path $TestSolutionFullPath ".build\output\ClassLibrary.3.6.0*.nupkg" | Should Exist
+        }
+    }
+
+    Context "Create a package with default version after having set and revert a semantic version project" {
+        BeforeAll {
+            # Arrange
+            $PackageVersion = Get-Version
+
+            # Act
+            Invoke-Pask $TestSolutionFullPath -Task Pack-ClassLibraryOther -ProjectName ClassLibrary.Other
+        }
+
+        It "creates the package with default Pask version" {
+            Join-Path $TestSolutionFullPath (".build\output\ClassLibrary.Other.{0}.nupkg" -f $PackageVersion.SemVer) | Should Exist
         }
     }
 }
