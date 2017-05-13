@@ -8,14 +8,14 @@ Describe "Push-Local" {
         Install-NuGetPackage -Name Pask.NuGet
         $LocalNuGetSource = Join-Path $TestSolutionFullPath "LocalNuGetSource"
         if (Test-Path $LocalNuGetSource) {
-            Remove-ItemSilently $LocalNuGetSource
+            Remove-PaskItem $LocalNuGetSource
         }
     }
 
     Context "Push package without symbols to local feed" {
         BeforeAll {
             # Arrange
-            Remove-ItemSilently (Join-Path $TestSolutionFullPath ".build\output")
+            Remove-PaskItem (Join-Path $TestSolutionFullPath ".build\output")
             Exec { Robocopy (Join-Path "$TestSolutionFullPath" ".build\test") (Join-Path "$TestSolutionFullPath" ".build\output") "ClassLibrary.3.2.0.nupkg" /256 /XO /NP /NFL /NDL /NJH /NJS } (0..7)
             
             # Act
