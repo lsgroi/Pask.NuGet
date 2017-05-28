@@ -25,7 +25,7 @@
       - appveyor.yml
       - LICENSE
       - README.md
-	
+
 # configuration for branches
 # build and test
 -
